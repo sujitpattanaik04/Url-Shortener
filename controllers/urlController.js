@@ -21,10 +21,10 @@ async function generateShortUrl(req, res, next) {
       });
     }
 
-    return res.render("home", { id: U.shortId });
+    res.render("home", { id: U.shortId });
     // return res.status(200).json({ status: "success", shortId: U.shortId });
   } catch (error) {
-    return res.status(400).json({ status: "failed", message: error.message });
+    res.status(400).json({ status: "failed", message: error.message });
   }
 
   next();
@@ -45,9 +45,9 @@ async function redirectShortUrl(req, res, next) {
       }
     );
     // console.log(entry);
-    return res.redirect(entry.redirectUrl);
+    res.redirect(entry.redirectUrl);
   } catch (error) {
-    return res.status(400).json({ status: "failed", message: error.message });
+    res.status(400).json({ status: "failed", message: error.message });
   }
 
   next();
@@ -56,13 +56,13 @@ async function redirectShortUrl(req, res, next) {
 async function getAnalytics(req, res, next) {
   try {
     const entry = await Url.findOne({ shortId: req.params.shortId });
-    return res.status(200).json({
+    res.status(200).json({
       status: "success",
       totalClicks: entry.visitHistory.length,
       analytics: entry.visitHistory,
     });
   } catch (error) {
-    return res.status(400).json({ status: "failed", message: error.message });
+    res.status(400).json({ status: "failed", message: error.message });
   }
 
   next();
