@@ -3,7 +3,7 @@ const Url = require("../models/urlModel");
 
 async function generateShortUrl(req, res, next) {
   try {
-    if (!req.body) {
+    if (!req.body.url) {
       return res.status(400).json({
         status: "failed",
         message: "Url is required!",
@@ -12,15 +12,19 @@ async function generateShortUrl(req, res, next) {
 
     const shortId = shortid();
 
-    await Url.create({
-      shortId,
-      redirectUrl: req.body.url,
-      visitHistory: [],
-    });
+    let U = await Url.findOne({ redirectUrl: req.body.url });
+    if (!U) {
+      U = await Url.create({
+        shortId,
+        redirectUrl: req.body.url,
+        visitHistory: [],
+      });
+    }
 
-    res.status(200).json({ status: "success", shortId });
+    return res.render("home", { id: U.shortId });
+    // return res.status(200).json({ status: "success", shortId: U.shortId });
   } catch (error) {
-    res.status(400).json({ status: "failed", message: error.message });
+    return res.status(400).json({ status: "failed", message: error.message });
   }
 
   next();
@@ -28,7 +32,6 @@ async function generateShortUrl(req, res, next) {
 
 async function redirectShortUrl(req, res, next) {
   try {
-    console.log(Date.now());
     const entry = await Url.findOneAndUpdate(
       {
         shortId: req.params.shortId,
@@ -41,10 +44,10 @@ async function redirectShortUrl(req, res, next) {
         },
       }
     );
-    console.log(entry);
-    res.redirect(entry.redirectUrl);
+    // console.log(entry);
+    return res.redirect(entry.redirectUrl);
   } catch (error) {
-    res.status(400).json({ status: "failed", message: error.message });
+    return res.status(400).json({ status: "failed", message: error.message });
   }
 
   next();
@@ -53,13 +56,13 @@ async function redirectShortUrl(req, res, next) {
 async function getAnalytics(req, res, next) {
   try {
     const entry = await Url.findOne({ shortId: req.params.shortId });
-    res.status(200).json({
+    return res.status(200).json({
       status: "success",
       totalClicks: entry.visitHistory.length,
       analytics: entry.visitHistory,
     });
   } catch (error) {
-    res.status(400).json({ status: "failed", message: error.message });
+    return res.status(400).json({ status: "failed", message: error.message });
   }
 
   next();

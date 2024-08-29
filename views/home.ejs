@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+    </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Url Shortener</h1>
+    <div>
+        <form method="post" action="/url">
+            <label>Enter Your Original URL : </label>
+            <input type="text" placeholder="https://example.com" name="url" />
+            <button type="submit">Generate</button>
+        </form>
+    </div>
+    <% if (locals.id) { %>
+        <p>Generated URL : <a href="http://localhost:4000/url/<%= id %>">http://localhost:4000/url/<%= id %></a></p>
+        <% } %>
+            <% if (locals.urls) { %>
+                <table>
+                    <thead>
+                        <th>Sl. No.</th>
+                        <th>ShortID</th>
+                        <th>Redirect</th>
+                        <th>Clicks</th>
+                    </thead>
+                    <tbody>
+                        <% urls.forEach((url,index)=> { %>
+                            <tr>
+                                <td>
+                                    <%= index+1 %>
+                                </td>
+                                <td>
+                                    <%= url.shortId %>
+                                </td>
+                                <td>
+                                    <a href="<%= url.redirectUrl %>">
+                                        <%= url.redirectUrl %>
+                                    </a>
+
+                                </td>
+                                <td>
+                                    <%= url.visitHistory.length %>
+                                </td>
+                            </tr>
+                            <% }) %>
+                    </tbody>
+                </table>
+                <% } %>
+
+
+</body>
+
+</html>
