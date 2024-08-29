@@ -12,7 +12,16 @@ const urlSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
-    visitHistory: [{ timestamp: { type: Number } }],
+    visitHistory: [
+      {
+        timestamp: {
+          type: String,
+          set: (val) => {
+            return new Date(val).toLocaleString();
+          },
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
